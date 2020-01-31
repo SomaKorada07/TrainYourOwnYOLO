@@ -2,11 +2,11 @@
 
 YOLO divides the input image into an **S**×**S** grid. Each grid cell predicts only **one** object. For example, the yellow grid cell below tries to predict the “person” object whose center (the blue dot) falls inside the grid cell.
 
-![1](C:\Users\Soma_Korada\Desktop\1.jpeg)
+![1](https://github.com/SomaKorada07/TrainYourOwnYOLO/blob/master/1.jpeg)
 
 Each grid cell predicts a fixed number of boundary boxes. In this example, the yellow grid cell makes two boundary box predictions (blue boxes) to locate where the person is.
 
-![2](C:\Users\Soma_Korada\Desktop\2.jpeg)
+![2](https://github.com/SomaKorada07/TrainYourOwnYOLO/blob/master/2.jpeg)
 
 For each grid cell,
 
@@ -16,13 +16,13 @@ For each grid cell,
 
 Each boundary box contains 5 elements: (*x, y, w, h*) and a **box confidence score**. The confidence score reflects how likely the box contains an object (**objectness**). The **conditional class probability** is the probability that the detected object belongs to a particular class (one probability per category for each cell). So, YOLO’s prediction has a shape of (S, S, B×5 + C) = (7, 7, 2×5 + 20) = (7, 7, 30).
 
-![3](C:\Users\Soma_Korada\Desktop\3.jpeg)
+![3](https://github.com/SomaKorada07/TrainYourOwnYOLO/blob/master/3.jpeg)
 
 The major concept of YOLO is to build a CNN network to predict a (7, 7, 30) tensor. It uses a CNN network to reduce the spatial dimension to 7×7 with 1024 output channels at each location. YOLO performs a linear regression using two fully connected layers to make 7×7×2 boundary box predictions (the middle picture below). To make a final prediction, we keep those with high box confidence scores (greater than 0.25) as our final predictions (the right picture).
 
-![4](C:\Users\Soma_Korada\Desktop\4.png)
+![4](https://github.com/SomaKorada07/TrainYourOwnYOLO/blob/master/4.png)
 
-![5](C:\Users\Soma_Korada\Desktop\5.png)
+![5](https://github.com/SomaKorada07/TrainYourOwnYOLO/blob/master/5.png)
 
 YOLO has 24 convolutional layers followed by 2 fully connected layers (FC). Some convolution layers use 1 × 1 reduction layers alternatively to reduce the depth of the features maps. For the last convolution layer, it outputs a tensor with shape (7, 7, 1024). The tensor is then flattened. Using 2 fully connected layers as a form of linear regression, it outputs 7×7×30 parameters and then reshapes to (7, 7, 30), i.e. 2 boundary box predictions per location.
 
@@ -52,7 +52,7 @@ YOLO uses sum-squared error between the predictions and the ground truth to calc
 
 If *an object is detected*, the classification loss at each cell is the squared error of the class conditional probabilities for each class:
 
-![6](C:\Users\Soma_Korada\Desktop\6.png)
+![6](https://github.com/SomaKorada07/TrainYourOwnYOLO/blob/master/6.png)
 
 
 
@@ -60,7 +60,7 @@ If *an object is detected*, the classification loss at each cell is the squared 
 
 The localization loss measures the errors in the predicted boundary box locations and sizes. We only count the box responsible for detecting the object.
 
-![7](C:\Users\Soma_Korada\Desktop\7.png)
+![7](https://github.com/SomaKorada07/TrainYourOwnYOLO/blob/master/7.png)
 
 We do not want to weight absolute errors in large boxes and small boxes equally. i.e. a 2-pixel error in a large box is the same for a small box. To partially address this, YOLO predicts the square root of the bounding box width and height instead of the width and height. In addition, to put more emphasis on the boundary box accuracy, we multiply the loss by λ*coord* (default: 5).
 
@@ -68,11 +68,11 @@ We do not want to weight absolute errors in large boxes and small boxes equally.
 
 If *an object is detected in the box*, the confidence loss (measuring the objectness of the box) is:
 
-![8](C:\Users\Soma_Korada\Desktop\8.png)
+![8](https://github.com/SomaKorada07/TrainYourOwnYOLO/blob/master/8.png)
 
 If *an object is not detected in the box*, the confidence loss is:
 
-![9](C:\Users\Soma_Korada\Desktop\9.png)
+![9](https://github.com/SomaKorada07/TrainYourOwnYOLO/blob/master/9.png)
 
 Most boxes do not contain any objects. This causes a class imbalance problem, i.e. we train the model to detect background more frequently than detecting objects. To accommodate this, we weight this loss down by a factor λ*noobj* (default: 0.5).
 
@@ -80,7 +80,7 @@ Most boxes do not contain any objects. This causes a class imbalance problem, i.
 
 The final loss adds localization, confidence and classification losses together.
 
-![10](C:\Users\Soma_Korada\Desktop\10.png)
+![10](https://github.com/SomaKorada07/TrainYourOwnYOLO/blob/master/10.png)
 
 # Versions of YOLO:
 
@@ -88,3 +88,5 @@ The final loss adds localization, confidence and classification losses together.
 - YOLOV2 - Input image is divided into 13X13 grid cells and number of templates is 5. Added Batch Normalization in the convolution layers.
 - YOLO9000 - Input image is divided into 26X26 grid cells and number of templates is 5. Mainly used for satellite images which are very small. YOLO9000 extends YOLO to detect objects over 9000 classes using hierarchical classification with a 9418 node WordTree.
 - YOLOV3 - YOLOv3 replaces the softmax function with independent logistic classifiers to calculate the likeliness of the input belongs to a specific label. Instead of using mean square error in calculating the classification loss, YOLOv3 uses binary cross-entropy loss for each label. This also reduces the computation complexity by avoiding the softmax function. YOLOv3 applies k-means cluster.
+
+# Reference - https://medium.com/@jonathan_hui/real-time-object-detection-with-yolo-yolov2-28b1b93e2088
